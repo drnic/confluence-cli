@@ -24,13 +24,24 @@ program
 program
   .command('read <pageId>')
   .description('Read a Confluence page by ID or URL')
-  .option('-f, --format <format>', 'Output format (html, text, markdown)', 'text')
+  .option('-f, --format <format>', 'Output format (html, text, markdown)')
   .action(async (pageId, options) => {
     const analytics = new Analytics();
     try {
       const config = getConfig();
+      let format = options.format || config.defaultFormat || 'text';
+
+      // Validate format
+      const validFormats = ['text', 'markdown', 'html'];
+      const normalizedFormat = format.toLowerCase();
+      if (!validFormats.includes(normalizedFormat)) {
+        console.error(chalk.red(`Error: Invalid format "${format}". Valid formats: text, markdown, html`));
+        process.exit(1);
+      }
+      format = normalizedFormat;
+
       const client = new ConfluenceClient(config);
-      const content = await client.readPage(pageId, options.format);
+      const content = await client.readPage(pageId, format);
       console.log(content);
       analytics.track('read', true);
     } catch (error) {

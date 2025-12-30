@@ -70,9 +70,11 @@ export CONFLUENCE_EMAIL="your.email@example.com"  # required when using Atlassia
 export CONFLUENCE_API_PATH="/wiki/rest/api"         # Cloud default; use /rest/api for Server/DC
 # Optional: set to 'bearer' for self-hosted/Data Center instances
 export CONFLUENCE_AUTH_TYPE="basic"
+# Optional: set default output format for read command (text, markdown, or html)
+export CONFLUENCE_DEFAULT_FORMAT="markdown"
 ```
 
-`CONFLUENCE_API_PATH` defaults to `/wiki/rest/api` for Atlassian Cloud domains and `/rest/api` otherwise. Override it when your site lives under a custom reverse proxy or on-premises path. `CONFLUENCE_AUTH_TYPE` defaults to `basic` when an email is present and falls back to `bearer` otherwise.
+`CONFLUENCE_API_PATH` defaults to `/wiki/rest/api` for Atlassian Cloud domains and `/rest/api` otherwise. Override it when your site lives under a custom reverse proxy or on-premises path. `CONFLUENCE_AUTH_TYPE` defaults to `basic` when an email is present and falls back to `bearer` otherwise. `CONFLUENCE_DEFAULT_FORMAT` sets the default output format for the read command (defaults to `text` if not specified).
 
 ### Getting Your API Token
 
@@ -85,15 +87,20 @@ export CONFLUENCE_AUTH_TYPE="basic"
 
 ### Read a Page
 ```bash
-# Read by page ID
+# Read by page ID (uses default format from config)
 confluence read 123456789
 
 # Read in markdown format
 confluence read 123456789 --format markdown
 
+# Read in HTML format
+confluence read 123456789 --format html
+
 # Read by URL (must contain pageId parameter)
 confluence read "https://your-domain.atlassian.net/wiki/viewpage.action?pageId=123456789"
 ```
+
+**Note:** The read command uses the default format configured during `confluence init` or via the `CONFLUENCE_DEFAULT_FORMAT` environment variable. You can override this with the `--format` flag.
 
 ### Get Page Information
 ```bash
